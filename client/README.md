@@ -1,18 +1,35 @@
-# React + Vite
+# CampusFix
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CampusFix is a React and Vite frontend for the CampusFix API. The API is an
+Express service backed by MongoDB.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install dependencies in both `client` and `server`, then create environment
+files from the variables used by each service:
 
-## React Compiler
+- `client/.env`: `VITE_API_URL=http://localhost:5000`
+- `server/.env`: `MONGODB_URI`, `JWT_SECRET`, and `CLIENT_ORIGIN=http://localhost:5173`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Run `npm run dev` in each directory to start the frontend and API.
 
-## Expanding the ESLint configuration
+## Deploying to Render
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-## Notes
-Comments are implemented in the backend API (add and list, with the same access rules as issues) and were tested with PowerShell. They do not have a screen in the React app yet.
+The repository includes a Render Blueprint in `../render.yaml` for the static
+frontend and Node API. To deploy:
+
+1. Push the repository to GitHub and create a Blueprint in Render from it.
+2. Create a MongoDB database in MongoDB Atlas. Configure Atlas network access
+   to allow connections from your Render API service, and copy its connection
+   string.
+3. When Render requests Blueprint environment variables, set:
+   - `MONGODB_URI`: the Atlas connection string.
+   - `JWT_SECRET`: a long, unique secret value.
+   - `CLIENT_ORIGIN`: the deployed `campusfix-client` URL, including `https://`.
+   - `VITE_API_URL`: the deployed `campusfix-api` URL, including `https://`.
+4. If Render assigns different service URLs, update `CLIENT_ORIGIN` on the API
+   and `VITE_API_URL` on the static site to match, then redeploy the static
+   site after changing its variable.
+
+Keep database credentials and JWT secrets in Render's environment settings;
+do not commit them to the repository.
